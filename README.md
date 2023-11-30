@@ -1,2 +1,1 @@
-# advent2023-go
-Advent of Code 2023
+# Advent of Code 2023
