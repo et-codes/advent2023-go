@@ -22,10 +22,10 @@ const (
 )
 
 func main() {
-	fmt.Println(day_2(puzzle))
+	fmt.Println(day02(puzzle))
 }
 
-func day_2(path string) []int {
+func day02(path string) []int {
 	games := a.ReadLines(path)
 
 	var result1, result2 int

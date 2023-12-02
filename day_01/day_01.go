@@ -25,10 +25,10 @@ var (
 )
 
 func main() {
-	fmt.Println(day_1(rePart1), day_1(rePart2)) // 54953, 53868
+	fmt.Println(day01(rePart1), day01(rePart2)) // 54953, 53868
 }
 
-func day_1(r *regexp.Regexp) int {
+func day01(r *regexp.Regexp) int {
 	input := a.ReadLines("day_1_data.txt")
 
 	sum := 0

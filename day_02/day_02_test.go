@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestDay2(t *testing.T) {
+func TestDay(t *testing.T) {
 	tests := map[string]struct {
 		source string
 		want   []int
@@ -16,11 +16,10 @@ func TestDay2(t *testing.T) {
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			got := day_2(test.source)
+			got := day02(test.source)
 			if !reflect.DeepEqual(got, test.want) {
 				t.Errorf("got %d, want %d", got, test.want)
 			}
 		})
 	}
-
 }
