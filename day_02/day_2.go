@@ -11,17 +11,14 @@ import (
 
 type bag map[string]int
 
+type game struct {
+	gameNum int
+	rounds  []bag
+}
+
 const (
 	test   = "day_2_test_data.txt"
 	puzzle = "day_2_data.txt"
-)
-
-var (
-	bag1 = bag{
-		"red":   12,
-		"green": 13,
-		"blue":  14,
-	}
 )
 
 func main() {
@@ -32,41 +29,55 @@ func day_2(path string) []int {
 	games := a.ReadLines(path)
 
 	var result1, result2 int
+	bag1 := bag{
+		"red":   12,
+		"green": 13,
+		"blue":  14,
+	}
 
-	for _, game := range games {
-		re := regexp.MustCompile(`\d+`)
-		gameNumber, _ := strconv.Atoi(re.FindString(game))
-
-		rounds := strings.Split(game, ": ")
-		rounds = strings.Split(rounds[1], "; ")
-
-		bag2 := bag{}
+	for _, g := range games {
+		game := parseGame(g)
 		possible := true
-		for _, round := range rounds {
-			cubes := strings.Split(round, ", ")
-			for _, cube := range cubes {
-				re = regexp.MustCompile(`(\d+|red|green|blue)`)
-				matches := re.FindAllString(cube, -1)
-				qty, _ := strconv.Atoi(matches[0])
-				color := matches[1]
+		bag2 := bag{}
 
-				if qty > bag2[color] {
-					bag2[color] = qty
-				}
-
+		for _, round := range game.rounds {
+			for color, qty := range round {
 				if qty > bag1[color] {
 					possible = false
 				}
+				if qty > bag2[color] {
+					bag2[color] = qty
+				}
 			}
 		}
-
 		if possible {
-			result1 += gameNumber
+			result1 += game.gameNum
 		}
-
 		result2 += power(bag2)
 	}
 	return []int{result1, result2}
+}
+
+func parseGame(in string) game {
+	gameMatch := regexp.MustCompile(`Game (\d+): `)
+	roundMatch := regexp.MustCompile(`(\d+) (red|green|blue);?`)
+
+	gameNum, _ := strconv.Atoi(gameMatch.FindAllStringSubmatch(in, 1)[0][1])
+	result := game{gameNum: gameNum}
+
+	round := bag{}
+	for roundMatch.MatchString(in) {
+		indices := roundMatch.FindSubmatchIndex([]byte(in))
+		match := roundMatch.FindStringSubmatch(in)
+		round[match[2]], _ = strconv.Atoi(match[1])
+		if strings.Contains(match[0], ";") {
+			result.rounds = append(result.rounds, round)
+			round = bag{}
+		}
+		in = in[indices[1]:]
+	}
+	result.rounds = append(result.rounds, round)
+	return result
 }
 
 func power(bag bag) int {
