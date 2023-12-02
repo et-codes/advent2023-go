@@ -62,7 +62,7 @@ func parseGame(in string) game {
 	gameMatch := regexp.MustCompile(`Game (\d+): `)
 	roundMatch := regexp.MustCompile(`(\d+) (red|green|blue);?`)
 
-	gameNum, _ := strconv.Atoi(gameMatch.FindAllStringSubmatch(in, 1)[0][1])
+	gameNum, _ := strconv.Atoi(gameMatch.FindStringSubmatch(in)[1])
 	result := game{gameNum: gameNum}
 
 	round := bag{}
