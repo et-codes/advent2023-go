@@ -9,3 +9,8 @@ Each day's puzzle is in its own folder:
 - `day_xx_test_data.go`: contains the sample data within the puzzle description.
 
 Typically I will develop the code's solution using the sample data until I get the same result. Then I run it again using the puzzle data and submit. *Usually* that will result in the correct answer, but sometimes the puzzle data has cases that do not work the first time around.
+
+The command below (assuming you're using Linux or Mac OS) create a new folder for the day indicated and populate it with (nearly) empty files with the above structure.
+```
+. newday.sh day_xx
+```
