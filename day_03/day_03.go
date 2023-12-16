@@ -41,30 +41,11 @@ func day03(path string) []int {
 }
 
 func hasSymbolNeighbor(lines []string, row int, index []int) bool {
-	var startRow, endRow, startCol, endCol int
-	if row > 0 {
-		startRow = row - 1
-	} else {
-		startRow = row
-	}
+	startRow := max(row-1, 0)
+	endRow := min(len(lines)-1, row+1)
 
-	if row < len(lines)-1 {
-		endRow = row + 1
-	} else {
-		endRow = row
-	}
-
-	if index[0] > 0 {
-		startCol = index[0] - 1
-	} else {
-		startCol = 0
-	}
-
-	if index[1] < len(lines[row])-1 {
-		endCol = index[1] + 1
-	} else {
-		endCol = index[1]
-	}
+	startCol := max(index[0]-1, 0)
+	endCol := min(len(lines[row])-1, index[1]+1)
 
 	for r := startRow; r <= endRow; r++ {
 		if strings.ContainsAny(lines[r][startCol:endCol], symbols) {
