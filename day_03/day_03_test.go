@@ -10,8 +10,8 @@ func TestDay(t *testing.T) {
 		source string
 		want   []int
 	}{
-		"with test data":   {test, []int{0, 0}},
-		"with puzzle data": {puzzle, []int{0, 0}},
+		"with test data":   {test, []int{4361, 0}},
+		"with puzzle data": {puzzle, []int{533784, 0}},
 	}
 
 	for name, test := range tests {
