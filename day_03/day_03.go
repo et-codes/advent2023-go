@@ -11,7 +11,6 @@ import (
 
 const (
 	symbols = "!@#$%^&*()_+-=[]{}|;:',<>/?`~"
-	numbers = "0123456789"
 	test    = "day_03_test_data.txt"
 	puzzle  = "day_03_data.txt"
 )
