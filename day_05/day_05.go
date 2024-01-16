@@ -20,33 +20,33 @@ type Map struct {
 }
 
 type Data struct {
+	Edges []int
 	Seeds []int
 	Maps  [][]Map
 }
 
 func main() {
-	fmt.Println(day05(puzzle))
+	fmt.Println(day05(test))
 }
 
 func day05(path string) []int {
 	data := load(path)
-	locations := convert(data)
-	return []int{min(locations), 0}
+	partOne := convert(data, 1)
+	partTwo := convert(data, 2)
+
+	return []int{partOne, partTwo}
 }
 
-func min(nums []int) int {
-	min := nums[0]
-	for _, num := range nums[1:] {
-		if num < min {
-			min = num
-		}
+func convert(data *Data, part int) int {
+	var locations []int
+
+	if part == 1 {
+		locations = make([]int, len(data.Seeds))
+		copy(locations, data.Seeds)
+	} else {
+		locations = make([]int, len(data.Edges))
+		copy(locations, data.Edges)
 	}
-	return min
-}
-
-func convert(data *Data) []int {
-	locations := make([]int, len(data.Seeds))
-	copy(locations, data.Seeds)
 
 	for i := range locations {
 		for _, maps := range data.Maps {
@@ -59,7 +59,7 @@ func convert(data *Data) []int {
 		}
 	}
 
-	return locations
+	return min(locations)
 }
 
 func load(path string) *Data {
@@ -68,12 +68,19 @@ func load(path string) *Data {
 		Maps:  make([][]Map, 7),
 	}
 	lines := a.ReadLines(path)
+	edges := []int{}
 
 	// Get seed numbers
 	seeds := strings.Split(lines[0], " ")
 	for _, seed := range seeds[1:] {
 		s, _ := strconv.Atoi(seed)
 		data.Seeds = append(data.Seeds, s)
+	}
+
+	// Add edges for seeds
+	for i := 0; i < len(data.Seeds); i += 2 {
+		edges = append(edges, data.Seeds[i])
+		edges = append(edges, data.Seeds[i]+data.Seeds[i+1])
 	}
 
 	// Load maps
@@ -91,7 +98,53 @@ func load(path string) *Data {
 		rng, _ := strconv.Atoi(vals[2])
 		m := Map{dest, src, rng}
 		data.Maps[i] = append(data.Maps[i], m)
+
+		// Add edges if they are in range of seeds
+		if inSeedRange(data, dest) {
+			edges = append(edges, dest)
+		}
+		if inSeedRange(data, dest+rng) {
+			edges = append(edges, dest+rng)
+		}
+		if inSeedRange(data, src) {
+			edges = append(edges, src)
+		}
+		if inSeedRange(data, src+rng) {
+			edges = append(edges, src+rng)
+		}
 	}
 
+	data.Edges = edges
 	return data
+}
+
+func inSeedRange(data *Data, num int) bool {
+	for i := 0; i < len(data.Seeds); i += 2 {
+		start := data.Seeds[i]
+		end := start + data.Seeds[i+1]
+		if num >= start && num <= end {
+			return true
+		}
+	}
+	return false
+}
+
+func min(nums []int) int {
+	min := nums[0]
+	for _, num := range nums[1:] {
+		if num < min {
+			min = num
+		}
+	}
+	return min
+}
+
+func max(nums []int) int {
+	max := nums[0]
+	for _, num := range nums {
+		if num > max {
+			max = num
+		}
+	}
+	return max
 }

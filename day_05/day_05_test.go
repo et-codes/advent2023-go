@@ -10,7 +10,7 @@ func TestDay(t *testing.T) {
 		source string
 		want   []int
 	}{
-		"with test data":   {test, []int{35, 0}},
+		"with test data":   {test, []int{35, 46}},
 		"with puzzle data": {puzzle, []int{579439039, 0}},
 	}
 
