@@ -24,12 +24,13 @@ func main() {
 
 func day_06(path string) []int {
 	data := a.ReadLines(path)
-	races := parseRaces(data)
+	races1 := parseRaces1(data)
+	races2 := parseRaces2(data)
 
-	return []int{partOne(races), 0}
+	return []int{runRaces(races1), runRaces(races2)}
 }
 
-func partOne(races []Race) int {
+func runRaces(races []Race) int {
 	margin := 1
 
 	for _, race := range races {
@@ -48,7 +49,7 @@ func partOne(races []Race) int {
 	return margin
 }
 
-func parseRaces(data []string) []Race {
+func parseRaces1(data []string) []Race {
 	races := []Race{}
 
 	timeStrings := strings.Split(data[0], " ")
@@ -70,4 +71,32 @@ func parseRaces(data []string) []Race {
 	}
 
 	return races
+}
+
+func parseRaces2(data []string) []Race {
+	timeString := ""
+	timeStrings := strings.Split(data[0], " ")
+	for _, time := range timeStrings[1:] {
+		if time != "" {
+			timeString += time
+		}
+	}
+
+	distString := ""
+	distStrings := strings.Split(data[1], " ")
+	for _, dist := range distStrings[1:] {
+		if dist != "" {
+			distString += dist
+		}
+	}
+
+	time, _ := strconv.Atoi(timeString)
+	dist, _ := strconv.Atoi(distString)
+
+	return []Race{
+		{
+			Time:   time,
+			Record: dist,
+		},
+	}
 }
