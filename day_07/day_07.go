@@ -15,19 +15,19 @@ const (
 )
 
 var cardRank = map[rune]int{
-	'A': 12,
-	'K': 11,
-	'Q': 10,
-	'J': 9,
-	'T': 8,
-	'9': 7,
-	'8': 6,
-	'7': 5,
-	'6': 4,
-	'5': 3,
-	'4': 2,
-	'3': 1,
-	'2': 0,
+	'A': 14,
+	'K': 13,
+	'Q': 12,
+	'J': 11,
+	'T': 10,
+	'9': 9,
+	'8': 8,
+	'7': 7,
+	'6': 6,
+	'5': 5,
+	'4': 4,
+	'3': 3,
+	'2': 2,
 }
 
 // Hand types
@@ -55,12 +55,20 @@ func main() {
 
 func day_07(path string) []int {
 	data := a.ReadLines(path)
-	hands = parseHands(data)
-	sort.SliceStable(hands, compareHands)
 
+	// Part One
+	cardRank['J'] = 11 // Jacks have normal value
+	hands = parseHands(data, false)
+	sort.SliceStable(hands, compareHands)
 	partOne := scoreHands(hands)
 
-	return []int{partOne, 0}
+	// Part Two
+	cardRank['J'] = 1 // Jokers are weakest-ranked card
+	hands = parseHands(data, true)
+	sort.SliceStable(hands, compareHands)
+	partTwo := scoreHands(hands)
+
+	return []int{partOne, partTwo}
 }
 
 // scoreHands returns the total winnings of the hands
@@ -94,7 +102,7 @@ func compareHands(i, j int) bool {
 }
 
 // parseHands returns a slice of Hand structs from the input data
-func parseHands(data []string) []Hand {
+func parseHands(data []string, useJokers bool) []Hand {
 	hands := []Hand{}
 	for _, line := range data {
 		parts := strings.Split(line, " ")
@@ -103,8 +111,7 @@ func parseHands(data []string) []Hand {
 			Cards: parts[0],
 			Bid:   bid,
 		}
-
-		setHandType(&hand)
+		hand.HandType = setHandType(hand, useJokers)
 
 		hands = append(hands, hand)
 	}
@@ -112,11 +119,33 @@ func parseHands(data []string) []Hand {
 	return hands
 }
 
-// setHandType sets the best possible hand type from the given hand
-func setHandType(hand *Hand) {
+// setHandType returns the best possible hand type from the given hand
+func setHandType(hand Hand, useJokers bool) int {
 	cardCounts := make(map[rune]int)
 	for _, card := range hand.Cards {
 		cardCounts[card]++
+	}
+
+	if useJokers {
+		jokerCount, found := cardCounts['J'] // check if J in hand
+		if found {
+			max := 0
+			for card, count := range cardCounts {
+				if count >= max && card != 'J' {
+					max = count
+				}
+			}
+
+			highestCard := '2'
+			for card, count := range cardCounts {
+				if card != 'J' && count == max && cardRank[card] > cardRank[highestCard] {
+					highestCard = card
+				}
+			}
+
+			cardCounts[highestCard] += jokerCount
+			delete(cardCounts, 'J')
+		}
 	}
 
 	hasThreeOfAKind := false
@@ -124,11 +153,9 @@ func setHandType(hand *Hand) {
 	for _, count := range cardCounts {
 		switch count {
 		case 5:
-			hand.HandType = fiveOfAKind
-			return
+			return fiveOfAKind
 		case 4:
-			hand.HandType = fourOfAKind
-			return
+			return fourOfAKind
 		case 3:
 			hasThreeOfAKind = true
 		case 2:
@@ -137,14 +164,14 @@ func setHandType(hand *Hand) {
 	}
 
 	if hasThreeOfAKind && pairs == 1 {
-		hand.HandType = fullHouse
+		return fullHouse
 	} else if hasThreeOfAKind {
-		hand.HandType = threeOfAKind
+		return threeOfAKind
 	} else if pairs == 2 {
-		hand.HandType = twoPair
+		return twoPair
 	} else if pairs == 1 {
-		hand.HandType = onePair
-	} else {
-		hand.HandType = highCard
+		return onePair
 	}
+
+	return highCard
 }
