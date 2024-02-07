@@ -126,9 +126,11 @@ func setHandType(hand Hand, useJokers bool) int {
 		cardCounts[card]++
 	}
 
+	// Part Two uses Jokers
 	if useJokers {
 		jokerCount, found := cardCounts['J'] // check if J in hand
 		if found {
+			// Find the maximum card count
 			max := 0
 			for card, count := range cardCounts {
 				if count >= max && card != 'J' {
@@ -136,6 +138,7 @@ func setHandType(hand Hand, useJokers bool) int {
 				}
 			}
 
+			// Find highest-ranking card with max card count
 			highestCard := '2'
 			for card, count := range cardCounts {
 				if card != 'J' && count == max && cardRank[card] > cardRank[highestCard] {
@@ -143,6 +146,7 @@ func setHandType(hand Hand, useJokers bool) int {
 				}
 			}
 
+			// Convert Jokers to highest-ranking max-count cards
 			cardCounts[highestCard] += jokerCount
 			delete(cardCounts, 'J')
 		}
